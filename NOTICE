@@ -1,0 +1,22 @@
+Creative Plugins
+Copyright 2026 Prajvis
+
+Originally developed by Prajvis.
+https://github.com/prajvis/creative-plugins
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This repository contains installer scripts, skills and plugin manifests only.
+It does not contain PhotoCraft, FilmCraft or LightCraft. The installers
+download the unmodified official releases of those applications from
+https://github.com/storytold. They are developed by the ArtCraft Team and their
+contributors and are licensed under the MIT License or the Apache License,
+Version 2.0, at your option; see the LICENSE and NOTICE files of each project.
+
+These plugins are unofficial. They are not made, sponsored or endorsed by the
+ArtCraft Team. PhotoCraft, FilmCraft, LightCraft and ArtCraft are names of
+their respective owners. Other product names mentioned in this repository are
+trademarks of their respective owners.
+
+The Prajvis name is covered by the separate policy in TRADEMARKS.md, which does
+not modify the Apache License.

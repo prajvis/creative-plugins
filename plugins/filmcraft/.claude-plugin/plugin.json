@@ -1,0 +1,17 @@
+{
+  "name": "filmcraft",
+  "version": "0.1.0",
+  "description": "Edit video headlessly with FilmCraft, an open-source Premiere-style editor: import media, build sequences, cut, apply effects, render frames and export. Installs the official filmcraft-cli into the plugin's bin/.",
+  "author": {
+    "name": "Prajvis"
+  },
+  "homepage": "https://github.com/prajvis/creative-plugins",
+  "repository": "https://github.com/prajvis/creative-plugins",
+  "license": "Apache-2.0",
+  "keywords": [
+    "filmcraft",
+    "video-editing",
+    "premiere",
+    "cli"
+  ]
+}

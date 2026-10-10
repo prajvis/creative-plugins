@@ -1,0 +1,5 @@
+# Downloaded CLIs land in each plugin's bin/ and are never committed.
+plugins/*/bin/*
+!plugins/*/bin/.keep
+!plugins/*/bin/*-install
+__pycache__/

@@ -1,0 +1,44 @@
+{
+  "name": "creative-plugins",
+  "interface": {
+    "displayName": "Creative Plugins"
+  },
+  "plugins": [
+    {
+      "name": "photocraft",
+      "source": {
+        "source": "local",
+        "path": "./plugins/photocraft"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Design"
+    },
+    {
+      "name": "filmcraft",
+      "source": {
+        "source": "local",
+        "path": "./plugins/filmcraft"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Design"
+    },
+    {
+      "name": "lightcraft",
+      "source": {
+        "source": "local",
+        "path": "./plugins/lightcraft"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Design"
+    }
+  ]
+}

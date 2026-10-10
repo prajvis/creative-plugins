@@ -1,0 +1,29 @@
+{
+  "name": "creative-plugins",
+  "owner": {
+    "name": "Prajvis"
+  },
+  "metadata": {
+    "description": "Agent plugins for open-source creative apps: PhotoCraft, FilmCraft and LightCraft, driven headlessly through their official CLIs"
+  },
+  "plugins": [
+    {
+      "name": "photocraft",
+      "source": "plugins/photocraft",
+      "description": "Edit images headlessly with PhotoCraft, an open-source Photoshop-style editor: crop, adjustments, filters, layers, masks, compositing and PSD export. Installs the official photocraft-cli into the plugin's bin/.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "filmcraft",
+      "source": "plugins/filmcraft",
+      "description": "Edit video headlessly with FilmCraft, an open-source Premiere-style editor: import media, build sequences, cut, apply effects, render frames and export. Installs the official filmcraft-cli into the plugin's bin/.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "lightcraft",
+      "source": "plugins/lightcraft",
+      "description": "Develop and export photos headlessly with LightCraft, an open-source Lightroom-style raw developer: exposure, colour, presets, auto settings, HDR/panorama merge and batch export. Installs the official lightcraft-cli into the plugin's bin/.",
+      "version": "0.1.0"
+    }
+  ]
+}

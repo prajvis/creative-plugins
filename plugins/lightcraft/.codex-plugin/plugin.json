@@ -1,0 +1,19 @@
+{
+  "name": "lightcraft",
+  "version": "0.1.0",
+  "description": "Develop and export photos headlessly with LightCraft, an open-source Lightroom-style raw developer: exposure, colour, presets, auto settings, HDR/panorama merge and batch export. Installs the official lightcraft-cli into the plugin's bin/.",
+  "author": {
+    "name": "Prajvis"
+  },
+  "homepage": "https://github.com/prajvis/creative-plugins",
+  "repository": "https://github.com/prajvis/creative-plugins",
+  "license": "Apache-2.0",
+  "keywords": [
+    "lightcraft",
+    "photo-editing",
+    "lightroom",
+    "raw",
+    "cli"
+  ],
+  "skills": "./skills/"
+}
