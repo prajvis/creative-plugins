@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "designcraft",
+  "version": "0.1.0",
+  "description": "Lay out pages headlessly with DesignCraft, an open-source InDesign-style publishing app: documents and pages, text and graphic frames, threaded stories, styles, parent pages, tables, TOC, data merge, packaging and export to PDF, PNG, IDML and EPUB. Installs the official designcraft-cli into the plugin's bin/.",
+  "author": {
+    "name": "Prajvis"
+  },
+  "homepage": "https://github.com/prajvis/creative-plugins",
+  "repository": "https://github.com/prajvis/creative-plugins",
+  "license": "Apache-2.0",
+  "keywords": [
+    "designcraft",
+    "cli",
+    "layout",
+    "publishing",
+    "pdf"
+  ]
+}

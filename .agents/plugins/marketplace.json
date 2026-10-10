@@ -39,6 +39,78 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Design"
+    },
+    {
+      "name": "vectorcraft",
+      "source": {
+        "source": "local",
+        "path": "./plugins/vectorcraft"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Design"
+    },
+    {
+      "name": "pdfcraft",
+      "source": {
+        "source": "local",
+        "path": "./plugins/pdfcraft"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "effectcraft",
+      "source": {
+        "source": "local",
+        "path": "./plugins/effectcraft"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Design"
+    },
+    {
+      "name": "designcraft",
+      "source": {
+        "source": "local",
+        "path": "./plugins/designcraft"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Design"
+    },
+    {
+      "name": "gridcraft",
+      "source": {
+        "source": "local",
+        "path": "./plugins/gridcraft"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "cadcraft",
+      "source": {
+        "source": "local",
+        "path": "./plugins/cadcraft"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Design"
     }
   ]
 }

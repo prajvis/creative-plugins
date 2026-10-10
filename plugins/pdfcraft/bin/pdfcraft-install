@@ -1,0 +1,258 @@
+#!/usr/bin/env bash
+# pdfcraft-install: installs the official pdfcraft-cli from GitHub releases into
+# the bin/ directory this script lives in (the plugin's bin/, which is on PATH).
+# All paths are relative to this script. See usage() below.
+set -euo pipefail
+
+TOOL="pdfcraft"               # release asset prefix
+CLI="pdfcraft-cli"            # executable installed into bin/
+REPO="storytold/pdfcraft"     # upstream GitHub repository
+# Optional data the CLI needs, copied from the Linux archive into bin/ (empty = none):
+# DATA_SRC is a directory inside the archive (relative to its top folder) and
+# DATA_DEST the directory under bin/ where the CLI looks for it.
+DATA_SRC="share/pdfcraft/models"
+DATA_DEST="models"
+
+bin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+me="$TOOL-install"
+target="$bin_dir/$CLI"
+
+usage() {
+  cat <<EOF
+Usage: $me [--check] [--version <tag>] [--force]
+
+Downloads the official $CLI release from https://github.com/$REPO/releases,
+verifies it against the release's SHA256SUMS.txt and installs the executable at
+  $target
+
+  (no flags)        install the latest release if missing or outdated
+  --check           report installed vs latest without changing anything
+                    exit 0 = up to date, 1 = not installed, 3 = update available
+  --version <tag>   install a specific release, e.g. v0.3.0
+  --force           reinstall even if that version is already present
+
+Supported: Linux x86_64/aarch64 (glibc) and macOS (universal CLI build).
+Needs curl or wget, tar (Linux) or unzip (macOS), and sha256sum or shasum.
+EOF
+}
+
+want="latest"
+mode="install"
+force=0
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --check) mode="check"; shift ;;
+    --force) force=1; shift ;;
+    --version)
+      [[ $# -ge 2 ]] || { echo "$me: --version needs a tag such as v1.2.3" >&2; exit 2; }
+      want="$2"; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "$me: unknown argument: $1" >&2; usage >&2; exit 2 ;;
+  esac
+done
+
+log() { echo "$me: $*" >&2; }
+# True when this install needs no data files or they are already in place.
+data_ok() {
+  [[ -z "$DATA_SRC" || "$(uname -s)" != Linux ]] && return 0
+  [[ -d "$bin_dir/$DATA_DEST" ]]
+}
+die() { log "$*"; exit 1; }
+
+fetch() { # fetch URL OUTFILE
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL --retry 3 --connect-timeout 20 -o "$2" "$1"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -q -O "$2" "$1"
+  else
+    log "need curl or wget"; return 1
+  fi
+}
+
+latest_tag() {
+  # github.com/<repo>/releases/latest redirects to .../releases/tag/<tag>.
+  # Following that redirect avoids the GitHub API and its rate limit.
+  local url=""
+  if command -v curl >/dev/null 2>&1; then
+    url="$(curl -fsSL -o /dev/null -w '%{url_effective}' --connect-timeout 20 "https://github.com/$REPO/releases/latest")" || return 1
+  elif command -v wget >/dev/null 2>&1; then
+    url="$(wget -S --spider "https://github.com/$REPO/releases/latest" 2>&1 | awk '/^ *Location: /{l=$2} END{print l}')" || return 1
+  else
+    return 1
+  fi
+  url="${url%%[[:space:]]*}"
+  case "$url" in
+    */releases/tag/?*) echo "${url##*/releases/tag/}" ;;
+    *) return 1 ;;
+  esac
+}
+
+installed_version() {
+  [[ -x "$target" ]] || return 1
+  # "photocraft-cli 0.3.0 (60224d3fb, 2026-10-07)" -> "0.3.0"
+  "$target" --version 2>/dev/null | awk 'NR==1{print $2}'
+}
+
+sha256_of() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$1" | awk '{print $1}'
+  elif command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$1" | awk '{print $1}'
+  else
+    return 1
+  fi
+}
+
+# Prints "<asset>|<path of the CLI inside the archive>" for this machine.
+platform_asset() {
+  local v="$1" os arch
+  os="$(uname -s)"
+  arch="$(uname -m)"
+  case "$arch" in
+    x86_64|amd64) arch="x86_64" ;;
+    aarch64|arm64) arch="aarch64" ;;
+    *) log "unsupported CPU architecture: $arch"; return 1 ;;
+  esac
+  case "$os" in
+    Linux)  echo "$TOOL-$v-linux-$arch.tar.gz|$TOOL-$v-linux-$arch/bin/$CLI" ;;
+    Darwin) echo "$CLI-$v-macos-universal.zip|$CLI-$v-macos-universal/$CLI" ;;
+    *) log "unsupported OS: $os (see https://github.com/$REPO/releases)"; return 1 ;;
+  esac
+}
+
+current="$(installed_version || true)"
+
+# ---- resolve the wanted release ------------------------------------------------
+if [[ "$want" == "latest" ]]; then
+  if ! tag="$(latest_tag)"; then
+    if [[ "$mode" == "check" && -n "$current" ]]; then
+      echo "$CLI: $current installed at $target (could not reach GitHub to compare)"
+      exit 0
+    fi
+    die "could not resolve the latest release of $REPO (network or egress policy?)"
+  fi
+else
+  tag="$want"
+  [[ "$tag" == v* ]] || tag="v$tag"
+fi
+[[ "$tag" =~ ^v[0-9A-Za-z][0-9A-Za-z._-]*$ ]] || die "unexpected release tag: $tag"
+version="${tag#v}"
+
+if [[ "$mode" == "check" ]]; then
+  if [[ -z "$current" ]]; then
+    echo "$CLI: not installed (latest $version). Run: $me"
+    exit 1
+  elif [[ "$current" == "$version" ]]; then
+    echo "$CLI: $current installed at $target (up to date)"
+    exit 0
+  else
+    echo "$CLI: $current installed at $target, $version available"
+    exit 3
+  fi
+fi
+
+if [[ "$current" == "$version" && "$force" -eq 0 ]] && data_ok; then
+  echo "$CLI $current already installed at $target"
+  exit 0
+fi
+
+# ---- bin/ must be writable -----------------------------------------------------
+mkdir -p "$bin_dir" 2>/dev/null || true
+probe="$bin_dir/.write-test.$$"
+if ! { : >"$probe"; } 2>/dev/null; then
+  die "$bin_dir is read-only here, so $CLI cannot be installed.
+On Prajvis only the agent owner's superuser computer can write plugin bin/ directories,
+and only if the plugin was attached before that computer started (start a new
+conversation after attaching). Ask the owner to run: $me"
+fi
+rm -f "$probe"
+
+# ---- one installer at a time ---------------------------------------------------
+# bin/ can be shared by several machines (Prajvis mounts the same storage into every
+# conversation), so a lock is only considered stale by age, never by PID.
+lock="$bin_dir/.$me.lock"
+have_lock=0
+stage=""
+cleanup() {
+  if [[ -n "$stage" ]]; then rm -rf "$stage"; fi
+  if [[ "$have_lock" -eq 1 ]]; then rm -rf "$lock"; fi
+}
+trap cleanup EXIT
+
+for attempt in $(seq 1 180); do
+  if mkdir "$lock" 2>/dev/null; then
+    have_lock=1
+    echo "$(hostname 2>/dev/null || echo unknown) $$" >"$lock/owner" || true
+    break
+  fi
+  if [[ -n "$(find "$lock" -maxdepth 0 -mmin +20 2>/dev/null)" ]]; then
+    log "removing stale lock $lock"
+    rm -rf "$lock"
+    continue
+  fi
+  [[ "$attempt" -eq 1 ]] && log "another install is running, waiting..."
+  sleep 5
+done
+[[ "$have_lock" -eq 1 ]] || die "timed out waiting for $lock"
+
+# Leftover staging dirs can only come from installers that died holding the lock.
+find "$bin_dir" -maxdepth 1 -name '.install.*' -exec rm -rf {} + 2>/dev/null || true
+
+# Another installer may have finished while we waited.
+current="$(installed_version || true)"
+if [[ "$current" == "$version" && "$force" -eq 0 ]] && data_ok; then
+  echo "$CLI $current already installed at $target"
+  exit 0
+fi
+
+stage="$(mktemp -d "$bin_dir/.install.XXXXXX")"
+
+# ---- download + verify ---------------------------------------------------------
+pair="$(platform_asset "$version")" || exit 1
+asset="${pair%%|*}"
+member="${pair#*|}"
+base="https://github.com/$REPO/releases/download/$tag"
+
+log "downloading $asset ($tag)"
+fetch "$base/$asset" "$stage/$asset" || die "download failed: $base/$asset"
+fetch "$base/SHA256SUMS.txt" "$stage/SHA256SUMS.txt" || die "download failed: $base/SHA256SUMS.txt"
+
+expected="$(awk -v f="$asset" '{n=$2; sub(/^\*/, "", n)} n == f {print $1; exit}' "$stage/SHA256SUMS.txt")"
+[[ -n "$expected" ]] || die "$asset is not listed in SHA256SUMS.txt for $tag"
+actual="$(sha256_of "$stage/$asset")" || die "need sha256sum or shasum to verify the download"
+[[ "$actual" == "$expected" ]] || die "checksum mismatch for $asset (expected $expected, got $actual)"
+log "checksum ok"
+
+# ---- extract only the CLI ------------------------------------------------------
+mkdir "$stage/x"
+case "$asset" in
+  *.tar.gz)
+    tar -xzf "$stage/$asset" -C "$stage/x" "$member" || die "$member not found in $asset"
+    if [[ -n "$DATA_SRC" ]]; then
+      data_member="${member%%/*}/$DATA_SRC"
+      tar -xzf "$stage/$asset" -C "$stage/x" "$data_member" || die "$data_member not found in $asset"
+      [[ -n "$(ls -A "$stage/x/$data_member" 2>/dev/null)" ]] || die "$data_member is empty in $asset"
+    fi ;;
+  *.zip)
+    if command -v unzip >/dev/null 2>&1; then
+      unzip -q "$stage/$asset" "$member" -d "$stage/x" || die "$member not found in $asset"
+    else
+      tar -xf "$stage/$asset" -C "$stage/x" "$member" || die "$member not found in $asset (install unzip)"
+    fi ;;
+esac
+new="$stage/x/$member"
+[[ -f "$new" && ! -L "$new" ]] || die "$member is missing or not a regular file"
+chmod 0755 "$new"
+
+got="$("$new" --version 2>/dev/null | awk 'NR==1{print $2}' || true)"
+[[ "$got" == "$version" ]] || die "the downloaded $CLI does not run on this machine (reported '$got', expected $version; glibc too old?)"
+
+# ---- publish -------------------------------------------------------------------
+# Data first, so a CLI of this version always has its data next to it.
+if [[ -n "${data_member:-}" ]]; then
+  if [[ -e "$bin_dir/$DATA_DEST" ]]; then mv "$bin_dir/$DATA_DEST" "$stage/old-data"; fi
+  mv "$stage/x/$data_member" "$bin_dir/$DATA_DEST"
+fi
+# Same-filesystem rename: atomic, and anything already running keeps the old file.
+mv -f "$new" "$target"
+echo "installed $CLI $version at $target"

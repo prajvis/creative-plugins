@@ -1,0 +1,18 @@
+{
+  "name": "effectcraft",
+  "version": "0.1.0",
+  "description": "Create motion graphics headlessly with EffectCraft, an open-source After Effects-style compositor: compositions, text, shape, solid and footage layers, keyframes, expressions, effects, masks and scripting, rendered to H.264, ProRes, WebM, GIF, image sequences or Lottie. Installs the official effectcraft-cli into the plugin's bin/.",
+  "author": {
+    "name": "Prajvis"
+  },
+  "homepage": "https://github.com/prajvis/creative-plugins",
+  "repository": "https://github.com/prajvis/creative-plugins",
+  "license": "Apache-2.0",
+  "keywords": [
+    "effectcraft",
+    "cli",
+    "motion-graphics",
+    "animation",
+    "video"
+  ]
+}

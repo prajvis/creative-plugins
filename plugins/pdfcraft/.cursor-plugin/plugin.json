@@ -1,0 +1,19 @@
+{
+  "name": "pdfcraft",
+  "version": "0.1.0",
+  "description": "Work on PDFs headlessly with PdfCraft, an open-source Acrobat-style editor: merge, split, reorder and rotate pages, extract text and images, render pages, fill forms, passwords, redaction, watermarks, OCR and Word/HTML export. Installs the official pdfcraft-cli into the plugin's bin/.",
+  "author": {
+    "name": "Prajvis"
+  },
+  "homepage": "https://github.com/prajvis/creative-plugins",
+  "repository": "https://github.com/prajvis/creative-plugins",
+  "license": "Apache-2.0",
+  "keywords": [
+    "pdfcraft",
+    "pdf",
+    "merge",
+    "forms",
+    "cli"
+  ],
+  "skills": "./skills/"
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "cadcraft",
+  "version": "0.1.0",
+  "description": "Draft 2D CAD drawings headlessly with CADCraft, an open-source AutoCAD-style drafting app: lines, polylines, circles, text, layers, dimensions, hatches, blocks, arrays and edits by handle, with DXF/DWG open and save and SVG, PNG and PDF export. Installs the official cadcraft-cli into the plugin's bin/.",
+  "author": {
+    "name": "Prajvis"
+  },
+  "homepage": "https://github.com/prajvis/creative-plugins",
+  "repository": "https://github.com/prajvis/creative-plugins",
+  "license": "Apache-2.0",
+  "keywords": [
+    "cadcraft",
+    "cli",
+    "cad",
+    "dxf",
+    "drafting"
+  ]
+}

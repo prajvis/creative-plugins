@@ -1,0 +1,19 @@
+{
+  "name": "gridcraft",
+  "version": "0.1.0",
+  "description": "Build and analyse spreadsheets headlessly with GridCraft, an open-source Excel-style spreadsheet app: cells and formulas, formatting, sort and filter, tables, charts, pivot tables and conversion between XLSX, CSV, TSV, JSON, HTML and PDF. Installs the official gridcraft-cli into the plugin's bin/.",
+  "author": {
+    "name": "Prajvis"
+  },
+  "homepage": "https://github.com/prajvis/creative-plugins",
+  "repository": "https://github.com/prajvis/creative-plugins",
+  "license": "Apache-2.0",
+  "keywords": [
+    "gridcraft",
+    "cli",
+    "spreadsheet",
+    "xlsx",
+    "excel"
+  ],
+  "skills": "./skills/"
+}

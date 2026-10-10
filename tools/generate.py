@@ -15,8 +15,9 @@ OWNER = {"name": "Prajvis"}
 REPOSITORY = "https://github.com/prajvis/creative-plugins"
 LICENSE = "Apache-2.0"
 MARKETPLACE_DESCRIPTION = (
-    "Agent plugins for open-source creative apps: PhotoCraft, FilmCraft and LightCraft, "
-    "driven headlessly through their official CLIs"
+    "Agent plugins for the open-source Crafting Apps (images, video, photos, vectors, PDFs, "
+    "motion graphics, page layout, spreadsheets and CAD), driven headlessly through their "
+    "official CLIs"
 )
 AUTHOR = {"name": "Prajvis"}
 
@@ -24,7 +25,7 @@ PLUGINS = [
     {
         "name": "photocraft",
         "display": "PhotoCraft",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "description": "Edit images headlessly with PhotoCraft, an open-source Photoshop-style editor: "
         "crop, adjustments, filters, layers, masks, compositing and PSD export. "
         "Installs the official photocraft-cli into the plugin's bin/.",
@@ -34,7 +35,7 @@ PLUGINS = [
     {
         "name": "filmcraft",
         "display": "FilmCraft",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "description": "Edit video headlessly with FilmCraft, an open-source Premiere-style editor: "
         "import media, build sequences, cut, apply effects, render frames and export. "
         "Installs the official filmcraft-cli into the plugin's bin/.",
@@ -44,11 +45,60 @@ PLUGINS = [
     {
         "name": "lightcraft",
         "display": "LightCraft",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "description": "Develop and export photos headlessly with LightCraft, an open-source "
         "Lightroom-style raw developer: exposure, colour, presets, auto settings, HDR/panorama "
         "merge and batch export. Installs the official lightcraft-cli into the plugin's bin/.",
         "keywords": ["lightcraft", "photo-editing", "lightroom", "raw", "cli"],
+        "category": "Design",
+    },
+    {
+        "name": "vectorcraft",
+        "display": "VectorCraft",
+        "version": "0.1.0",
+        "description": "Create and edit vector artwork headlessly with VectorCraft, an open-source Illustrator-style editor: shapes, paths, text, gradients, live effects, Pathfinder, artboards, image trace and conversion between SVG, PDF, AI, EPS, DXF and PNG/JPEG. Installs the official vectorcraft-cli into the plugin's bin/.",
+        "keywords": ["vectorcraft", "cli", "vector", "svg", "illustration"],
+        "category": "Design",
+    },
+    {
+        "name": "pdfcraft",
+        "display": "PdfCraft",
+        "version": "0.1.0",
+        "description": "Work on PDFs headlessly with PdfCraft, an open-source Acrobat-style editor: merge, split, reorder and rotate pages, extract text and images, render pages, fill forms, passwords, redaction, watermarks, OCR and Word/HTML export. Installs the official pdfcraft-cli into the plugin's bin/.",
+        "keywords": ["pdfcraft", "pdf", "merge", "forms", "cli"],
+        "category": "Productivity",
+        "data": {"src": "share/pdfcraft/models", "dest": "models"},
+    },
+    {
+        "name": "effectcraft",
+        "display": "EffectCraft",
+        "version": "0.1.0",
+        "description": "Create motion graphics headlessly with EffectCraft, an open-source After Effects-style compositor: compositions, text, shape, solid and footage layers, keyframes, expressions, effects, masks and scripting, rendered to H.264, ProRes, WebM, GIF, image sequences or Lottie. Installs the official effectcraft-cli into the plugin's bin/.",
+        "keywords": ["effectcraft", "cli", "motion-graphics", "animation", "video"],
+        "category": "Design",
+    },
+    {
+        "name": "designcraft",
+        "display": "DesignCraft",
+        "version": "0.1.0",
+        "description": "Lay out pages headlessly with DesignCraft, an open-source InDesign-style publishing app: documents and pages, text and graphic frames, threaded stories, styles, parent pages, tables, TOC, data merge, packaging and export to PDF, PNG, IDML and EPUB. Installs the official designcraft-cli into the plugin's bin/.",
+        "keywords": ["designcraft", "cli", "layout", "publishing", "pdf"],
+        "category": "Design",
+    },
+    {
+        "name": "gridcraft",
+        "display": "GridCraft",
+        "version": "0.1.0",
+        "description": "Build and analyse spreadsheets headlessly with GridCraft, an open-source Excel-style spreadsheet app: cells and formulas, formatting, sort and filter, tables, charts, pivot tables and conversion between XLSX, CSV, TSV, JSON, HTML and PDF. Installs the official gridcraft-cli into the plugin's bin/.",
+        "keywords": ["gridcraft", "cli", "spreadsheet", "xlsx", "excel"],
+        "category": "Productivity",
+    },
+    {
+        "name": "cadcraft",
+        "display": "CADCraft",
+        "version": "0.1.0",
+        "description": "Draft 2D CAD drawings headlessly with CADCraft, an open-source AutoCAD-style drafting app: lines, polylines, circles, text, layers, dimensions, hatches, blocks, arrays and edits by handle, with DXF/DWG open and save and SVG, PNG and PDF export. Installs the official cadcraft-cli into the plugin's bin/.",
+        "keywords": ["cadcraft", "cli", "cad", "dxf", "drafting"],
         "category": "Design",
     },
 ]
@@ -90,7 +140,10 @@ def main() -> None:
         write(root / "bin" / ".keep", "")
         # The installer sits next to the CLI in bin/, so it's on PATH wherever bin/ is.
         write(root / "bin" / f"{p['name']}-install",
-              template.replace("__TOOL__", p["name"]), executable=True)
+              template.replace("__TOOL__", p["name"])
+              .replace("__DATA_SRC__", p.get("data", {}).get("src", ""))
+              .replace("__DATA_DEST__", p.get("data", {}).get("dest", "")),
+              executable=True)
 
     write(REPO / ".claude-plugin" / "marketplace.json", dump({
         "name": MARKETPLACE,

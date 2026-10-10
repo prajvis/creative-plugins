@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "vectorcraft",
+  "version": "0.1.0",
+  "description": "Create and edit vector artwork headlessly with VectorCraft, an open-source Illustrator-style editor: shapes, paths, text, gradients, live effects, Pathfinder, artboards, image trace and conversion between SVG, PDF, AI, EPS, DXF and PNG/JPEG. Installs the official vectorcraft-cli into the plugin's bin/.",
+  "author": {
+    "name": "Prajvis"
+  },
+  "homepage": "https://github.com/prajvis/creative-plugins",
+  "repository": "https://github.com/prajvis/creative-plugins",
+  "license": "Apache-2.0",
+  "keywords": [
+    "vectorcraft",
+    "cli",
+    "vector",
+    "svg",
+    "illustration"
+  ]
+}

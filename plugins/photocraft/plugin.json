@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "photocraft",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Edit images headlessly with PhotoCraft, an open-source Photoshop-style editor: crop, adjustments, filters, layers, masks, compositing and PSD export. Installs the official photocraft-cli into the plugin's bin/.",
   "author": {
     "name": "Prajvis"

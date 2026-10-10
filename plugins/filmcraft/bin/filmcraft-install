@@ -7,6 +7,11 @@ set -euo pipefail
 TOOL="filmcraft"               # release asset prefix
 CLI="filmcraft-cli"            # executable installed into bin/
 REPO="storytold/filmcraft"     # upstream GitHub repository
+# Optional data the CLI needs, copied from the Linux archive into bin/ (empty = none):
+# DATA_SRC is a directory inside the archive (relative to its top folder) and
+# DATA_DEST the directory under bin/ where the CLI looks for it.
+DATA_SRC=""
+DATA_DEST=""
 
 bin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 me="$TOOL-install"
@@ -47,6 +52,11 @@ while [[ $# -gt 0 ]]; do
 done
 
 log() { echo "$me: $*" >&2; }
+# True when this install needs no data files or they are already in place.
+data_ok() {
+  [[ -z "$DATA_SRC" || "$(uname -s)" != Linux ]] && return 0
+  [[ -d "$bin_dir/$DATA_DEST" ]]
+}
 die() { log "$*"; exit 1; }
 
 fetch() { # fetch URL OUTFILE
@@ -141,7 +151,7 @@ if [[ "$mode" == "check" ]]; then
   fi
 fi
 
-if [[ "$current" == "$version" && "$force" -eq 0 ]]; then
+if [[ "$current" == "$version" && "$force" -eq 0 ]] && data_ok; then
   echo "$CLI $current already installed at $target"
   exit 0
 fi
@@ -190,7 +200,7 @@ find "$bin_dir" -maxdepth 1 -name '.install.*' -exec rm -rf {} + 2>/dev/null || 
 
 # Another installer may have finished while we waited.
 current="$(installed_version || true)"
-if [[ "$current" == "$version" && "$force" -eq 0 ]]; then
+if [[ "$current" == "$version" && "$force" -eq 0 ]] && data_ok; then
   echo "$CLI $current already installed at $target"
   exit 0
 fi
@@ -217,7 +227,12 @@ log "checksum ok"
 mkdir "$stage/x"
 case "$asset" in
   *.tar.gz)
-    tar -xzf "$stage/$asset" -C "$stage/x" "$member" || die "$member not found in $asset" ;;
+    tar -xzf "$stage/$asset" -C "$stage/x" "$member" || die "$member not found in $asset"
+    if [[ -n "$DATA_SRC" ]]; then
+      data_member="${member%%/*}/$DATA_SRC"
+      tar -xzf "$stage/$asset" -C "$stage/x" "$data_member" || die "$data_member not found in $asset"
+      [[ -n "$(ls -A "$stage/x/$data_member" 2>/dev/null)" ]] || die "$data_member is empty in $asset"
+    fi ;;
   *.zip)
     if command -v unzip >/dev/null 2>&1; then
       unzip -q "$stage/$asset" "$member" -d "$stage/x" || die "$member not found in $asset"
@@ -233,6 +248,11 @@ got="$("$new" --version 2>/dev/null | awk 'NR==1{print $2}' || true)"
 [[ "$got" == "$version" ]] || die "the downloaded $CLI does not run on this machine (reported '$got', expected $version; glibc too old?)"
 
 # ---- publish -------------------------------------------------------------------
+# Data first, so a CLI of this version always has its data next to it.
+if [[ -n "${data_member:-}" ]]; then
+  if [[ -e "$bin_dir/$DATA_DEST" ]]; then mv "$bin_dir/$DATA_DEST" "$stage/old-data"; fi
+  mv "$stage/x/$data_member" "$bin_dir/$DATA_DEST"
+fi
 # Same-filesystem rename: atomic, and anything already running keeps the old file.
 mv -f "$new" "$target"
 echo "installed $CLI $version at $target"
